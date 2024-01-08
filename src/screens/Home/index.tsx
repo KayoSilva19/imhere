@@ -1,21 +1,29 @@
 import { FlatList, ScrollView, Text, TextInput, TouchableOpacity, View, Alert } from 'react-native';
 import { styles } from './styles'
 import { Participant } from '../../components/Participant';
+import { useState } from 'react';
 export function Home() {
-
-  const participants = ['Kayo', 'Maria', 'Davi', 'Irene', 'João', 'Keyne', 'Kelvin', 'Kyane', 'Anderson']
+  const [participants, setParticipants] = useState<string[]>([])
+  const [participantName, setParticipantName] = useState('')
 
   function handleParticipantAdd() {
-    if(participants.includes('Kayo')) {
+    if(participants.includes(participantName)) {
       return Alert.alert('Participante já existe', 'Já existe um participante na lista com este mesmo nome.')
     }
+
+    if(participantName === '') {
+      return Alert.alert('Preencha o nome do participante', 'Você esqueceu de colocar o nome do convidado!')
+    }
+
+    setParticipants(prevState => [...prevState, participantName])
+    setParticipantName('')
   }
 
   function handleParticipantRemove(participantName: string) {
     Alert.alert('Remover Participante', `Deseja remover este participante? Nome: ${participantName}`, [{
       text: 'Sim',
       onPress: () => {
-       Alert.alert('Remover Participante', `O participante ${participantName} foi deletado da lista.`)
+       setParticipants(prevState => prevState.filter(participant => participant !== participantName))
       }
     }, {
       text: 'Não',
@@ -33,6 +41,8 @@ return(
         style={styles.input}
         placeholder='Nome do participante'
         placeholderTextColor='#6B6B6B'
+        value={participantName}
+        onChangeText={(nameParticipant) => setParticipantName(nameParticipant)}
         key='3'
       />
 
